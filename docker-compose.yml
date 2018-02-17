@@ -1,0 +1,58 @@
+version: '3'
+services:
+  a:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+
+  b:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+      
+  c:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+      
+  d:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+      
+  e:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+      
+  f:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+      
+  g:
+    image: docker.jampad.net/sample/recursivecall-go
+    deploy:
+        replicas: 3
+    networks:
+      - recursivecallnet
+    ports:
+      - "3000:3000"
+
+networks:
+  recursivecallnet:
+    driver: overlay
+    driver_opts:
+      encrypted: ""
