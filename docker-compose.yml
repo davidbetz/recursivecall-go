@@ -9,6 +9,11 @@ services:
 
   b:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "a"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
@@ -16,6 +21,11 @@ services:
       
   c:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "b"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
@@ -23,6 +33,11 @@ services:
       
   d:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "c"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
@@ -30,6 +45,11 @@ services:
       
   e:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "d"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
@@ -37,6 +57,11 @@ services:
       
   f:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "e"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
@@ -44,6 +69,11 @@ services:
       
   g:
     image: docker.jampad.net/sample/recursivecall-go
+    healthcheck:
+      test: ["CMD", "./recursivecall", "check", "f"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
     deploy:
         replicas: 3
     networks:
