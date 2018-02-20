@@ -1,14 +1,14 @@
 version: '3'
 services:
   a:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     deploy:
         replicas: 3
     networks:
       - recursivecallnet
 
   b:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "a"]
       interval: 5s
@@ -20,7 +20,7 @@ services:
       - recursivecallnet
       
   c:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "b"]
       interval: 5s
@@ -32,7 +32,7 @@ services:
       - recursivecallnet
       
   d:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "c"]
       interval: 5s
@@ -44,7 +44,7 @@ services:
       - recursivecallnet
       
   e:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "d"]
       interval: 5s
@@ -56,7 +56,7 @@ services:
       - recursivecallnet
       
   f:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "e"]
       interval: 5s
@@ -68,7 +68,7 @@ services:
       - recursivecallnet
       
   g:
-    image: docker.jampad.net/sample/recursivecall-go
+    image: davidbetz/recursivecall-go
     healthcheck:
       test: ["CMD", "./recursivecall", "check", "f"]
       interval: 5s
