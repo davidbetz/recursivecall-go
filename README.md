@@ -28,7 +28,7 @@ This is what Docker does with containers. There's just a lot of namespace magic 
 
 > The term "container" and the preposition "in" lead to extreme confusion, but the terminology is pretty much baked into the industry at this point. There's nothing "in" a container, but something can be "in" an image.
 
-Namespaces are clever and very helpful. If I were to write a plug-in model for an application, I'd create each plug-in in a different namespace then share an IPC namespace for communication. Supposedly, Google Chrome on Linux does something similar for various add-ons.
+Namespaces are clever and very helpful. If I were to write a plug-in model for an application, I'd create each plug-in in a different namespace then share an IPC namespace for communication. Supposedly, Google Chrome on Linux does something similar with namespaces for various add-ons. Namespaces give you an easy, built-in way to do jailing/sandboxing.
 
 Because a mount namespace is isolated from another mount namespace, when files are required, they need to be in the correct namespace. In this case, isolation implies redundancy. Having /etc/hosts, for example, on the host doesn't help you, you need it in your namespace too. 
 
@@ -44,7 +44,7 @@ You could copy each of these libraries into the image or you could use something
 
 > You could use Alpine, but I said *content from Alpine*. You want what it provides, if not Alpine as a whole.  You could literally take the `xz` file and run with it. That said, there's little reason not to base your work on Alpine.
 
-So, we care less about a "base image" as we do the shared libraries within. Theoretically, if you're careful, you can create an image from `scratch`, dump in the Node binaries, then map each shared library from the host to the container.
+We care less about a "base image" as we do the shared libraries within. Theoretically, if you're careful, you can create an image from `scratch`, dump in the Node binaries, then map each shared library from the host to the container.
 
 There is, however, a simpler out-of-the-box model: **Go**.
 
