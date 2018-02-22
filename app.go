@@ -7,12 +7,15 @@ import (
     "log"
     "net/http"
     "os"
+    "runtime"
     "strings"
+    "strconv"
 )
 
 var port = os.Getenv("PORT")
+var procsString = os.Getenv("PROCS")
 
-func call(address string, ch chan<- string, errChannel chan<- error) {
+func call(address string, outputChannel chan<- string, errChannel chan<- error) {
     var uri = "http://" + address + ":" + port
     log.Println("+CALLING ", uri)
     response, err := http.Get(uri)
@@ -21,7 +24,7 @@ func call(address string, ch chan<- string, errChannel chan<- error) {
     } else {
         contents, err := ioutil.ReadAll(response.Body)
         if response.StatusCode == 200 {
-            ch <- fmt.Sprintf("%s", contents)
+            outputChannel <- fmt.Sprintf("%s", contents)
         } else {
             errChannel <- err
         }
@@ -32,18 +35,18 @@ func call(address string, ch chan<- string, errChannel chan<- error) {
 func handler(w http.ResponseWriter, r *http.Request) {
     var id = strings.Split(r.Host, ":")[0]
     var called = []rune(id)[0]
+    outputChannel := make(chan string)
     errChannel := make(chan error, 1)
     log.Println("+CALLED id:", id, "|called:", called)
-    ch := make(chan string)
     if called > 97 {
-        go call(string(called-1), ch, errChannel)
+        go call(string(called-1), outputChannel, errChannel)
     } else {
         go func() {
-            ch <- "$"
+            outputChannel <- "$"
         }()
     }
     select {
-        case value := <-ch:
+        case value := <- outputChannel:
             value += "," + id
             log.Println("-RETURNING " + value)
             w.Write([]byte(value))
@@ -63,6 +66,13 @@ func check(letter string) {
 }
 
 func main() {
+    procs, err := strconv.Atoi(procsString)
+    if err != nil {
+        procs = 1
+    }
+    if procs > 0 {
+        runtime.GOMAXPROCS(procs)
+    }
     var arg string
     if(len(os.Args) > 1) {
         arg = os.Args[1]

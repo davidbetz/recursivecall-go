@@ -4,6 +4,8 @@ services:
     image: davidbetz/recursivecall-go
     deploy:
         replicas: 3
+    environment:
+      - PROCS=1
     networks:
       - recursivecallnet
 
@@ -14,6 +16,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
@@ -26,6 +30,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
@@ -38,6 +44,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
@@ -50,6 +58,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
@@ -62,6 +72,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
@@ -74,6 +86,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+    environment:
+      - PROCS=1
     deploy:
         replicas: 3
     networks:
