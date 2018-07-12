@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service.name: d
+    application.name: recursivecall-go
+  name: d
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      service.name: d
+      application.name: recursivecall-go
+  template:
+    metadata:
+      labels:
+        service.name: d
+        application.name: recursivecall-go
+    spec:
+      containers:
+      - env:
+        - name: PROCS
+          value: "1"
+        image: davidbetz/recursivecall-go
+        livenessProbe:
+          exec:
+            command:
+            - ./recursivecall
+            - check
+            - c
+          failureThreshold: 3
+          periodSeconds: 5
+          timeoutSeconds: 10
+        name: d
+        resources: {}
+      restartPolicy: Always
+status: {}

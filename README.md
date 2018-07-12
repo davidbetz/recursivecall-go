@@ -69,3 +69,21 @@ To get the full effect of this sample, run in a Swarm environment:
     docker stack deploy --compose-file docker-compose.yml --with-registry-auth rcgo
 
 You need to add `g` to some form of name resolution (DNS or `/etc/hosts`). Once the call is inside Swarm, it will handle the rest of the name resolution itself.
+
+## Kubernetes Deploy
+
+Start:
+
+    kubectl create -f k8s
+
+Check:
+
+    kubectl get service -l application.name=recursivecall-go
+
+Stop:
+
+    kubectl delete services,deployments -l application.name=recursivecall-go
+
+Break service "c":
+
+    kubectl delete deployment,service c
