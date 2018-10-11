@@ -1,22 +1,22 @@
-## RecursiveCall (Go)
+# RecursiveCall (Go)
 
-### Description
+## Description
 
 Simple API that calls another instance of itself. Used to demonstrate Docker orchestration.
 
-Related: [NodeJS version](https://github.com/davidbetz/recursivecall) 
+Related: [NodeJS version](https://github.com/davidbetz/recursivecall)
 
-### Details
+## Details
 
 This Go version creates a Docker image with a size of **4.26MB**.
 
-The trick is to use create an image from scratch and make your Go binary statically linked.
-
-### Docker Background
+## Docker Background
 
 Docker "containers" aren't like virtual machines; you're not creating an general purpose environment with its own kernel. What you're doing is giving your project the minimum is needs to run.
 
-#### Namespaces
+### Namespaces
+
+(see [https://netfxharmonics.com/2018/02/advintrodocker](https://netfxharmonics.com/2018/02/advintrodocker) for an advanced, practical introduction to Docker for much more details)
 
 Docker uses an existing Linux concept called **namespaces**. In fact, Docker is largely a tool that abstracts already existing Linux cleverness, including namespaces (and cgroups).
 
@@ -30,9 +30,9 @@ This is what Docker does with containers. There's just a lot of namespace magic 
 
 Namespaces are clever and very helpful. If I were to write a plug-in model for an application, I'd create each plug-in in a different namespace then share an IPC namespace for communication. Supposedly, Google Chrome on Linux does something similar with namespaces for various add-ons. Namespaces give you an easy, built-in way to do jailing/sandboxing.
 
-Because a mount namespace is isolated from another mount namespace, when files are required, they need to be in the correct namespace. In this case, isolation implies redundancy. Having /etc/hosts, for example, on the host doesn't help you, you need it in your namespace too. 
+Because a mount namespace is isolated from another mount namespace, when files are required, they need to be in the correct namespace. In this case, isolation implies redundancy. Having /etc/hosts, for example, on the host doesn't help you, you need it in your namespace too.
 
-#### Images
+### Images
 
 Let's apply this information to Docker image creation.
 
@@ -72,18 +72,4 @@ You need to add `g` to some form of name resolution (DNS or `/etc/hosts`). Once 
 
 ## Kubernetes Deploy
 
-Start:
-
-    kubectl create -f k8s
-
-Check:
-
-    kubectl get service -l application.name=recursivecall-go
-
-Stop:
-
-    kubectl delete services,deployments -l application.name=recursivecall-go
-
-Break service "c":
-
-    kubectl delete deployment,service c
+See [https://github.com/davidbetz/recursivecall-k8s](https://github.com/davidbetz/recursivecall-k8s) for the Kubernetes deployment files.
