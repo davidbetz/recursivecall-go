@@ -32,13 +32,15 @@ import (
     "runtime"
     "strings"
     "strconv"
+    "time"
 )
 
 var port = os.Getenv("PORT")
 var procsString = os.Getenv("PROCS")
+var addressSuffix = os.Getenv("ADDRESS_SUFFIX")
 
 func call(address string, outputChannel chan<- string, errChannel chan<- error) {
-    var uri = "http://" + address + ":" + port
+    var uri = "http://" + address + "." + addressSuffix + ":" + port
     log.Println("+CALLING ", uri)
     response, err := http.Get(uri)
     if err != nil {
@@ -54,12 +56,33 @@ func call(address string, outputChannel chan<- string, errChannel chan<- error) 
     }
 }
 
+func getId(host string) string {
+    log.Println("host", host)
+    var id string
+    //+ if . in host, use first part
+    withSuffixParts := strings.Split(host, ".")
+    if(len(withSuffixParts) > 0) {
+        id = withSuffixParts[0]
+    }
+    //+ if : in host, use host
+    if(len(id) == 0) {
+        parts := strings.Split(host, ":")
+        id = parts[0]
+    }
+    //+ if len(host) > 0, default to g
+    if(len(id) != 1) {
+        log.Println("Argument length != 1. Defaulting to g.")
+        id = "g"
+    }
+    return id
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
-    var id = strings.Split(r.Host, ":")[0]
+    var id = getId(r.Host)
     var called = []rune(id)[0]
     outputChannel := make(chan string)
     errChannel := make(chan error, 1)
-    log.Println("+CALLED id:", id, "|called:", called)
+    log.Println("+CALLED id", id, "|called", called)
     if called > 97 {
         go call(string(called-1), outputChannel, errChannel)
     } else {
@@ -78,7 +101,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func check(letter string) {
-    response, err := http.Get("http://" + letter + ":" + port)
+    response, err := http.Get("http://" + letter + "." + addressSuffix + ":" + port)
     if err != nil {
         panic(err)
     } else {
@@ -87,11 +110,35 @@ func check(letter string) {
     }
 }
 
+func waste(procs int) {
+    log.Println("wasting CPU cycles for 10 seconds...")
+    q := make(chan bool)
+
+    for i := 0; i < procs; i++ {
+        go func() {
+            for {
+                select {
+                case <- q:
+                    return
+                default:
+                }
+            }
+        }()
+    }
+
+    time.Sleep(10 * time.Second)
+    for i := 0; i < procs; i++ {
+        q <- true
+    }
+    log.Println("done CPU cylcles.")
+}
+
 func main() {
     procs, err := strconv.Atoi(procsString)
     if err != nil {
         procs = 1
     }
+    log.Println("PROCS", procsString)
     if procs > 0 {
         runtime.GOMAXPROCS(procs)
     }
@@ -102,15 +149,16 @@ func main() {
     if len(port) == 0 {
         port = "3000"
     }
+    log.Println("PORT", port)
+    log.Println("ADDRESS_SUFFIX", addressSuffix)
     switch arg {
     case "check":
-        if(len(os.Args) < 3 || len(os.Args[2]) != 1) {
-            panic("letter required")
-        }
-        check(os.Args[2])
+        check(getId(os.Args[2]))
+    case "waste":
+        waste(procs)
     default:
         http.HandleFunc("/", handler)
         log.Println("Starting server on port", port)
-        log.Fatal(http.ListenAndServe(":"+port, nil))
+        log.Fatal(http.ListenAndServe(":" + port, nil))
     }
 }
