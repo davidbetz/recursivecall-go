@@ -78,7 +78,11 @@ func getId(host string) string {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    var id = getId(r.Host)
+    //+ if id in path, use it
+    id := r.URL.Path[1:]
+    if(len(id) != 1) {
+        id = getId(r.Host)
+    }
     var called = []rune(id)[0]
     outputChannel := make(chan string)
     errChannel := make(chan error, 1)

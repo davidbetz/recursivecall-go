@@ -2,7 +2,7 @@
 
 ## Description
 
-Simple API that calls another instance of itself. Used to demonstrate Docker orchestration.
+Simple API that calls another instance of itself. Used to demonstrate Docker and Kubernetes orchestration.
 
 Related: [NodeJS version](https://github.com/davidbetz/recursivecall)
 
