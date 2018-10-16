@@ -77,10 +77,21 @@ func getId(host string) string {
     return id
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func commandHandler(w http.ResponseWriter, r *http.Request) {
+    commandName := r.URL.Path[len("/command/"):]
+    log.Println("commandName", commandName)
+    switch(commandName) {
+    case "waste":
+        waste(w)
+    default:
+        fmt.Fprintf(w, "Command %s unknown.", commandName)
+    }
+}
+
+func rcHandler(w http.ResponseWriter, r *http.Request) {
     //+ if id in path, use it
     id := r.URL.Path[1:]
-    if(len(id) != 1) {
+    if len(id) != 1 {
         id = getId(r.Host)
     }
     var called = []rune(id)[0]
@@ -114,10 +125,12 @@ func check(letter string) {
     }
 }
 
-func waste(procs int) {
-    log.Println("wasting CPU cycles for 10 seconds...")
-    q := make(chan bool)
+func waste(w http.ResponseWriter) {
+    procs := getProcs()
+    
+    log.Println("wasting CPU cycles for 10 seconds...|procs", procs)
 
+    q := make(chan bool)
     for i := 0; i < procs; i++ {
         go func() {
             for {
@@ -134,15 +147,23 @@ func waste(procs int) {
     for i := 0; i < procs; i++ {
         q <- true
     }
-    log.Println("done CPU cylcles.")
+    
+    output := "done wasting CPU cycles."
+    log.Println(output)
+    fmt.Fprintf(w, output)
 }
 
-func main() {
+func getProcs() int {
+    log.Println("PROCS", procsString)
     procs, err := strconv.Atoi(procsString)
     if err != nil {
         procs = 1
     }
-    log.Println("PROCS", procsString)
+    return procs
+}
+
+func main() {
+    procs := getProcs()
     if procs > 0 {
         runtime.GOMAXPROCS(procs)
     }
@@ -158,10 +179,9 @@ func main() {
     switch arg {
     case "check":
         check(getId(os.Args[2]))
-    case "waste":
-        waste(procs)
     default:
-        http.HandleFunc("/", handler)
+        http.HandleFunc("/command/", commandHandler)
+        http.HandleFunc("/", rcHandler)
         log.Println("Starting server on port", port)
         log.Fatal(http.ListenAndServe(":" + port, nil))
     }
