@@ -11,6 +11,7 @@ COPY . ./
 RUN CGO_ENABLED=0 go build -installsuffix cgo -ldflags '-w -s' -o recursivecall
 
 ###################################
+
 FROM scratch
 
 COPY --from=build /go/src/recursivecall/recursivecall /
